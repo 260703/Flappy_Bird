@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Flappy Bird Main Menu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@400;700&amp;family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#19e65e",
+              "background-light": "#70C5CF",
+              "background-dark": "#112116",
+            },
+            fontFamily: {
+              "display": ["Spline Sans", "Noto Sans", "sans-serif"],
+              "game": ["'Press Start 2P'", "cursive"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .pixelated-border {
+            border-style: solid;
+            border-image-slice: 2;
+            border-image-width: 2;
+            border-image-repeat: stretch;
+            border-image-source: url('data:image/svg+xml;utf8,<?xml version="1.0" encoding="UTF-8" ?><svg version="1.1" width="5" height="5" xmlns="http://www.w3.org/2000/svg"><path d="M2 1 h1 v1 h-1 z M1 2 h1 v1 h-1 z M3 2 h1 v1 h-1 z M2 3 h1 v1 h-1 z" fill="black" /></svg>');
+            border-image-outset: 2;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark">
+<div class="relative flex h-screen w-full flex-col group/design-root overflow-hidden bg-center bg-no-repeat bg-cover" style='font-family: "Press Start 2P", "Spline Sans", sans-serif; background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuC2YlXrK_dOvmnRJwweBCTBn_PaRmo8fC6ZgZxiwMTGlzw9MVxI5db3rvJwP_d5oKGgyzrjiIC42IbA8x25kyye8ZHtZjFRhPn3VOl4ayihCkccXnm6zMad85asvgy1XG3veg95w4ltGlYDn4qitOxqPPD1BOw99NUXIQcwYRq24zoo8sw32gPJhflUrzi61xhEAmzkKx7r8x3E0a6ZYBFuoSs2lutIU0pj5so1nGXNn-OQXGXn5lRiSUhhSy_IxwWEPq1C4v_vbJmc"); background-color: #70C5CF;'>
+<div class="absolute inset-0 bg-background-light dark:bg-background-dark bg-center bg-repeat-x" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2YlXrK_dOvmnRJwweBCTBn_PaRmo8fC6ZgZxiwMTGlzw9MVxI5db3rvJwP_d5oKGgyzrjiIC42IbA8x25kyye8ZHtZjFRhPn3VOl4ayihCkccXnm6zMad85asvgy1XG3veg95w4ltGlYDn4qitOxqPPD1BOw99NUXIQcwYRq24zoo8sw32gPJhflUrzi61xhEAmzkKx7r8x3E0a6ZYBFuoSs2lutIU0pj5so1nGXNn-OQXGXn5lRiSUhhSy_IxwWEPq1C4v_vbJmc'); background-size: auto 100%;"></div>
+<div class="relative layout-container flex h-full grow flex-col justify-center items-center p-4">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1 justify-center items-center text-center">
+<div class="w-full flex justify-center items-center pb-8">
+<div class="w-24 h-16 bg-center bg-no-repeat bg-contain" data-alt="Flappy bird sprite, a yellow bird with an orange beak" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCwvO_UcRyQMqN12mPSRYaX95dAcBICzy8y1U3PqlLQNKO3rklL4a2dqvIV2G9xj-QsMyvtlFpx1IsfuiP9OTuol7s4MReB_6EzpTtUYXIQ3NUKy--0ElUrm7R49huecjOSrmKdXZhqNXjCvUHN4lplB3lx4PYTg1OtPz1leRARNaGMHU5w8OOwwNMCtoa1HDJMx-lunMP7SvYj7LY8qzY-0gdN5Bpi2VELVKi-ix2avlFJm6r1HbdSpYiOf4vbZgjcbwMN9Wfzb9hT");'></div>
+</div>
+<h1 class="text-[#F7E043] font-game tracking-normal text-5xl md:text-7xl font-bold leading-tight pb-6 pt-6" style="text-shadow: 4px 4px 0px #000000, -4px -4px 0px #000000, 4px -4px 0px #000000, -4px 4px 0px #000000, 4px 0px 0px #000000, -4px 0px 0px #000000, 0px 4px 0px #000000, 0px -4px 0px #000000;">FLAPPY BIRD</h1>
+<p class="text-white text-xl font-normal leading-normal pb-8 pt-2 px-4 text-center font-game" style="text-shadow: 2px 2px 0px #000000;">High Score: 123</p>
+<div class="flex px-4 py-3 justify-center">
+<button class="flex min-w-[200px] max-w-[480px] cursor-pointer items-center justify-center overflow-visible rounded-none h-16 px-5 bg-[#73BF2F] text-white text-2xl font-bold leading-normal tracking-wide font-game pixelated-border transform hover:scale-105 transition-transform duration-150 active:translate-y-1" style="box-shadow: 0 6px 0 #4a8c20;">
+<span class="truncate">START</span>
+</button>
+</div>
+<div class="absolute right-4 top-4">
+<button class="flex items-center justify-center h-12 w-12 bg-white/30 rounded-lg text-white hover:bg-white/50 transition-colors">
+<span class="material-symbols-outlined text-3xl">volume_up</span>
+</button>
+</div>
+</div>
+<div class="w-full absolute bottom-0 left-0 h-28 bg-repeat-x bg-bottom" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC2YlXrK_dOvmnRJwweBCTBn_PaRmo8fC6ZgZxiwMTGlzw9MVxI5db3rvJwP_d5oKGgyzrjiIC42IbA8x25kyye8ZHtZjFRhPn3VOl4ayihCkccXnm6zMad85asvgy1XG3veg95w4ltGlYDn4qitOxqPPD1BOw99NUXIQcwYRq24zoo8sw32gPJhflUrzi61xhEAmzkKx7r8x3E0a6ZYBFuoSs2lutIU0pj5so1nGXNn-OQXGXn5lRiSUhhSy_IxwWEPq1C4v_vbJmc'); background-size: auto 100%;"></div>
+<div class="absolute bottom-4">
+<p class="text-white text-xs font-normal leading-normal font-game" style="text-shadow: 1px 1px 0px #000000;">A Tribute by UI Designer</p>
+</div>
+</div>
+</div>
+</body></html>
