@@ -1,5 +1,8 @@
 import React from 'react';
 import { PixelButton } from './ui/Button';
+import birdImg from '../assets/bird.png';
+import cloudImg from '../assets/cloud.png';
+import backgroundImg from '../assets/background.png';
 
 interface MainMenuProps {
   onStart: () => void;
@@ -16,7 +19,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStart, onOpenEditor, onOpe
       <div 
         className="absolute inset-0 w-[200%] animate-scroll-bg opacity-80 pixelated"
         style={{ 
-          backgroundImage: 'url(/src/assets/cloud.png)', 
+          backgroundImage: `url(${cloudImg})`, 
           backgroundSize: '50% auto',
           backgroundRepeat: 'repeat-x',
           backgroundPosition: '0 20%'
@@ -26,7 +29,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStart, onOpenEditor, onOpe
       <div 
         className="absolute bottom-0 w-[200%] h-[200px] animate-scroll-bg z-0 pixelated"
         style={{ 
-          backgroundImage: 'url(/src/assets/background.png)',
+          backgroundImage: `url(${backgroundImg})`,
           backgroundSize: '50% 100%',
           backgroundRepeat: 'repeat-x',
         }}
@@ -39,7 +42,7 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStart, onOpenEditor, onOpe
         <div className="animate-float flex flex-col items-center mb-12">
             <div className="relative">
                 <img 
-                    src="/src/assets/bird.png" 
+                    src={birdImg}
                     alt="Bird" 
                     className="w-16 h-12 absolute -left-20 -top-4 pixelated rotate-[-15deg]" 
                 />

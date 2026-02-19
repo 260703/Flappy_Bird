@@ -86,6 +86,16 @@ create policy "Users can update own profile."
   using ( auth.uid() = id );
 ```
 
+### Static Assets
+
+- **Images**: Place images in `src/assets` and **import** them in your components.
+  ```typescript
+  import birdImg from '../assets/bird.png';
+  // ...
+  <img src={birdImg} />
+  ```
+- **Public Files**: Files in `public/` are served at the root `/` and are not processed by Vite. Use this for `favicon.ico`, `robots.txt`, etc.
+
 ## Deployment
 
 ### Vercel (Recommended)

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import type { MapData, PipeData } from '../types';
 import { saveMap } from '../utils/storage';
+import backgroundImg from '../assets/background.png';
 
 
 interface MapEditorProps {
@@ -108,7 +109,7 @@ export const MapEditor: React.FC<MapEditorProps> = ({ onBack }) => {
            className="relative h-full min-w-[3000px] w-[5000px]" 
            onClick={handleAreaClick}
            style={{ 
-             backgroundImage: 'url(/src/assets/background.png)', 
+             backgroundImage: `url(${backgroundImg})`, 
              backgroundSize: 'auto 100%',
              backgroundRepeat: 'repeat-x',
            }}
