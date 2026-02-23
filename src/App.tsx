@@ -8,6 +8,7 @@ import Auth from "./components/Auth";
 import { supabase } from "./utils/supabaseClient";
 import type { MapData } from "./types";
 import type { Session } from "@supabase/supabase-js";
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [session, setSession] = useState<Session | null>(null);
@@ -119,6 +120,7 @@ function App() {
 
   return (
     <>
+      <Analytics />
       {gameState === "menu" && (
         <div className="relative">
           <button
