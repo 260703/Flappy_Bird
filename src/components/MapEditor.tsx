@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import type { MapData, PipeData } from '../types';
 import { saveMap } from '../utils/storage';
-import backgroundImg from '../assets/background.png';
+import backgroundImg from '../assets/background.jpg';
 
 
 interface MapEditorProps {

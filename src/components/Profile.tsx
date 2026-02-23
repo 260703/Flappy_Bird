@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, type FC } from 'react';
 import { supabase } from '../utils/supabaseClient';
 
 interface ProfileProps {
@@ -7,13 +7,25 @@ interface ProfileProps {
   userId: string;
 }
 
-export const Profile: React.FC<ProfileProps> = ({ onBack, onLogout, userId }) => {
+export const Profile: FC<ProfileProps> = ({ onBack, onLogout, userId }) => {
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [msg, setMsg] = useState('');
+
+  // Validation helpers
+  const sanitizeText = (text: string) => text.trim().replace(/[<>"'&]/g, '');
+  const isValidUrl = (url: string) => {
+    if (!url) return true; // empty is allowed
+    try {
+      const parsed = new URL(url);
+      return parsed.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
 
   useEffect(() => {
     getProfile();
@@ -46,12 +58,39 @@ export const Profile: React.FC<ProfileProps> = ({ onBack, onLogout, userId }) =>
   const updateProfile = async () => {
     try {
       setLoading(true);
+
+      const trimmedUsername = sanitizeText(username);
+      const trimmedFullName = sanitizeText(fullName);
+      const trimmedAvatarUrl = avatarUrl.trim();
+      const parsedAge = parseInt(age) || 0;
+
+      if (trimmedUsername && !/^[a-zA-Z0-9_]{3,20}$/.test(trimmedUsername)) {
+        setMsg('Error: Username must be 3-20 chars (letters, numbers, underscores)');
+        setLoading(false);
+        return;
+      }
+      if (trimmedFullName && !/^[a-zA-Z\s]{2,50}$/.test(trimmedFullName)) {
+        setMsg('Error: Full name must be 2-50 chars (letters and spaces)');
+        setLoading(false);
+        return;
+      }
+      if (parsedAge && (parsedAge < 1 || parsedAge > 120)) {
+        setMsg('Error: Age must be between 1 and 120');
+        setLoading(false);
+        return;
+      }
+      if (!isValidUrl(trimmedAvatarUrl)) {
+        setMsg('Error: Avatar URL must be a valid HTTPS URL');
+        setLoading(false);
+        return;
+      }
+
       const updates = {
         id: userId,
-        username,
-        full_name: fullName,
-        age: parseInt(age) || 0,
-        avatar_url: avatarUrl,
+        username: trimmedUsername,
+        full_name: trimmedFullName,
+        age: parsedAge,
+        avatar_url: trimmedAvatarUrl,
         updated_at: new Date(),
       };
 

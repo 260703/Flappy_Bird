@@ -12,14 +12,35 @@ import type { Session } from "@supabase/supabase-js";
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [gameState, setGameState] = useState<
-    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile"
+    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth"
   >("menu");
   const [highScore, setHighScore] = useState(0);
   const [score, setScore] = useState(0);
   const [selectedMap, setSelectedMap] = useState<MapData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [pendingScore, setPendingScore] = useState<number | null>(null);
 
-  // ✅ Define this BEFORE using it anywhere
+  // Ensure a profile exists for the current user (handles OAuth edge cases)
+  const ensureProfileExists = async (userId: string, email: string, fullName?: string) => {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id")
+      .eq("id", userId)
+      .single();
+
+    if (!data) {
+      // Profile doesn't exist — create it
+      const username = email ? email.split("@")[0] : "player";
+      await supabase.from("profiles").upsert({
+        id: userId,
+        username,
+        full_name: fullName || "",
+        age: 0,
+        high_score: 0,
+      });
+    }
+  };
+
   const fetchHighScore = async (userId: string) => {
     const { data, error } = await supabase
       .from("profiles")
@@ -28,7 +49,8 @@ function App() {
       .single();
 
     if (error) {
-      console.error("Error fetching high score:", error.message);
+      console.warn("Could not fetch high score:", error.message);
+      setHighScore(0);
       return;
     }
 
@@ -37,31 +59,64 @@ function App() {
     }
   };
 
+  // Effect 1: Auth state listener — ONLY sets session, no API calls here
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-
-      if (session?.user) {
-        fetchHighScore(session.user.id).finally(() => setLoading(false));
-      } else {
-        setLoading(false);
-      }
+      if (!session) setLoading(false);
     });
 
-    // Listen to auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-
+      if (!session) {
+        setHighScore(0);
+        setLoading(false);
+      }
+      // If we were on the auth screen, go back to menu after successful login
       if (session?.user) {
-        fetchHighScore(session.user.id);
+        setGameState((prev) => (prev === 'auth' ? 'menu' : prev));
       }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  // Effect 2: When session changes, load profile & high score (safely, with catch)
+  useEffect(() => {
+    if (!session?.user) return;
+
+    let cancelled = false;
+
+    const loadUserData = async () => {
+      try {
+        await ensureProfileExists(
+          session.user.id,
+          session.user.email || "",
+          session.user.user_metadata?.full_name
+        );
+        if (cancelled) return;
+
+        // If there's a pending score from guest play, save it now
+        if (pendingScore !== null && pendingScore > 0) {
+          await supabase.rpc('update_high_score', { new_score: pendingScore });
+          setPendingScore(null);
+        }
+
+        await fetchHighScore(session.user.id);
+      } catch (err) {
+        console.error("Error loading user data:", err);
+        if (!cancelled) setHighScore(0);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadUserData();
+
+    return () => { cancelled = true; };
+  }, [session?.user?.id]);
 
   const startGame = () => {
     setSelectedMap(null);
@@ -83,10 +138,10 @@ function App() {
       setHighScore(finalScore);
 
       if (session?.user) {
-        const { error } = await supabase
-          .from("profiles")
-          .update({ high_score: finalScore })
-          .eq("id", session.user.id);
+        // Use server-side function for secure score update
+        const { error } = await supabase.rpc('update_high_score', {
+          new_score: finalScore,
+        });
 
         if (error) {
           console.error("Error updating high score:", error.message);
@@ -105,6 +160,16 @@ function App() {
     await supabase.auth.signOut();
   };
 
+  const handleOpenAuth = () => {
+    setGameState("auth");
+  };
+
+  const handleLoginToSaveScore = () => {
+    // Store the guest's score so it can be saved after login
+    setPendingScore(score);
+    setGameState("auth");
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-900 text-white">
@@ -113,27 +178,27 @@ function App() {
     );
   }
 
-  if (!session) {
-    return <Auth onLogin={() => {}} />;
-  }
-
   return (
     <>
       {gameState === "menu" && (
         <div className="relative">
-          <button
-            onClick={handleLogout}
-            className="absolute top-4 right-4 z-50 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow border-2 border-black font-game text-xs"
-          >
-            LOGOUT
-          </button>
+          {session && (
+            <button
+              onClick={handleLogout}
+              className="absolute top-4 right-4 z-50 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow border-2 border-black font-game text-xs"
+            >
+              LOGOUT
+            </button>
+          )}
 
           <MainMenu
             onStart={startGame}
             onOpenEditor={() => setGameState("editor")}
             onOpenCustomMap={() => setGameState("custom-select")}
-            onOpenProfile={() => setGameState("profile")}
+            onOpenProfile={() => session ? setGameState("profile") : setGameState("auth")}
+            onOpenAuth={handleOpenAuth}
             highScore={highScore}
+            isGuest={!session}
           />
         </div>
       )}
@@ -147,6 +212,10 @@ function App() {
         />
       )}
 
+      {gameState === "auth" && (
+        <Auth onLogin={() => setGameState("menu")} onBack={handleBackToMenu} />
+      )}
+
       {gameState === 'profile' && session?.user && (
         <Profile 
           onBack={handleBackToMenu} 
@@ -156,7 +225,10 @@ function App() {
       )}
 
       {gameState === "playing" && (
-        <Game onGameOver={handleGameOver} initialPipes={selectedMap?.pipes} />
+        <Game 
+          onGameOver={handleGameOver} 
+          initialPipes={selectedMap?.pipes} 
+        />
       )}
 
       {gameState === "gameover" && (
@@ -194,6 +266,16 @@ function App() {
             </div>
 
             <div className="flex flex-col gap-4">
+              {!session && (
+                <button
+                  onClick={handleLoginToSaveScore}
+                  className="px-6 py-3 bg-blue-500 text-white border-2 border-black hover:scale-105 active:translate-y-1 transition-transform"
+                  style={{ boxShadow: "0 4px 0 #2563eb" }}
+                >
+                  LOGIN TO SAVE SCORE
+                </button>
+              )}
+
               <button
                 onClick={selectedMap ? () => startCustomGame(selectedMap) : startGame}
                 className="px-6 py-3 bg-[#54ac42] text-white border-2 border-black hover:scale-105 active:translate-y-1 transition-transform"

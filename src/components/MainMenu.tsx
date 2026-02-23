@@ -1,20 +1,54 @@
-import React from 'react';
+import { type FC } from 'react';
 import { PixelButton } from './ui/Button';
-import birdImg from '../assets/bird.png';
-import cloudImg from '../assets/cloud.png';
-import backgroundImg from '../assets/background.png';
+import birdImg from '../assets/bird.jpg';
+import cloudImg from '../assets/cloud.jpg';
+import backgroundImg from '../assets/background.jpg';
 
 interface MainMenuProps {
   onStart: () => void;
   onOpenEditor: () => void;
   onOpenCustomMap: () => void;
   onOpenProfile: () => void;
+  onOpenAuth: () => void;
   highScore: number;
+  isGuest?: boolean;
 }
 
-export const MainMenu: React.FC<MainMenuProps> = ({ onStart, onOpenEditor, onOpenCustomMap, onOpenProfile, highScore }) => {
+export const MainMenu: FC<MainMenuProps> = ({ 
+  onStart, 
+  onOpenEditor, 
+  onOpenCustomMap, 
+  onOpenProfile, 
+  onOpenAuth,
+  highScore,
+  isGuest
+}) => {
+  const handleRestrictedAction = (action: () => void, featureName: string) => {
+    if (isGuest) {
+      alert(`Please LOGIN to access ${featureName}!`);
+      onOpenAuth();
+    } else {
+      action();
+    }
+  };
+
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden bg-flappy-sky">
+      {/* Guest Badge */}
+      {isGuest && (
+        <div className="absolute top-4 left-4 z-50 flex items-center gap-2">
+          <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-white text-[10px] font-game">
+            GUEST ACCOUNT
+          </div>
+          <button 
+            onClick={onOpenAuth}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full border border-black text-[10px] font-game shadow-[2px_2px_0_#000]"
+          >
+            LOGIN
+          </button>
+        </div>
+      )}
+
       {/* Animated Background Layers */}
       <div 
         className="absolute inset-0 w-[200%] animate-scroll-bg opacity-80 pixelated"
@@ -69,16 +103,24 @@ export const MainMenu: React.FC<MainMenuProps> = ({ onStart, onOpenEditor, onOpe
           </PixelButton>
           
           <div className="flex gap-4 w-full">
-            <PixelButton onClick={onOpenEditor} variant="secondary" className="flex-1 text-sm md:text-lg hover:scale-105 transition-transform">
+            <PixelButton 
+              onClick={() => handleRestrictedAction(onOpenEditor, 'the Map Editor')} 
+              variant="secondary" 
+              className="flex-1 text-sm md:text-lg hover:scale-105 transition-transform"
+            >
               CREATE MAP
             </PixelButton>
-            <PixelButton onClick={onOpenCustomMap} variant="accent" className="flex-1 text-sm md:text-lg hover:scale-105 transition-transform">
+            <PixelButton 
+              onClick={() => handleRestrictedAction(onOpenCustomMap, 'Custom Maps')} 
+              variant="accent" 
+              className="flex-1 text-sm md:text-lg hover:scale-105 transition-transform"
+            >
               CUSTOM MAPS
             </PixelButton>
           </div>
           
            <PixelButton onClick={onOpenProfile} variant="secondary" className="w-full text-sm md:text-lg hover:scale-105 transition-transform border-t-4 border-yellow-400">
-              PROFILE
+              {isGuest ? 'LOGIN TO PROFILE' : 'PROFILE'}
            </PixelButton>
         </div>
 

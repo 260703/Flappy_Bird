@@ -1,7 +1,42 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #259df4;
+  --color-background-light: #f5f7f8;
+  --color-background-dark: #101a22;
+  --font-display: "Plus Jakarta Sans", "sans-serif";
+}
+
 @layer utilities {
   .pixelated {
     image-rendering: pixelated;
+  }
+
+  .glass-card {
+    background: rgba(16, 26, 34, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(37, 157, 244, 0.2);
+  }
+
+  .glow-button {
+    box-shadow: 0 0 20px rgba(37, 157, 244, 0.4);
+    transition: all 0.3s ease;
+  }
+
+  .glow-button:hover {
+    box-shadow: 0 0 30px rgba(37, 157, 244, 0.6);
+    transform: translateY(-1px);
+  }
+
+  .bg-game-world {
+    background-image:
+      linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+      url(https://lh3.googleusercontent.com/aida-public/AB6AXuBD1ZhTHwpL5gfZNQAu9UusraOxjC_jNbNLBVCqNzGGbOEZKTYGEZkMpjeBvdBqc-DY9Ze_ZE4GLSzGoBeBGlycAD55Si0KJeE3DPMLetyslSUweLZ7hoxDU9MsvJOPENv_gKUymtF4g7-EBpzBZQXR5LyL5q3MjsVjObxB1iEPldFKbdXtLIdfKNBBuSpimHH_z0YE3YatfUSos5VVLuuvzexd-LLZJAfUe19ZY4sqm4AtIkou9TN2corLzLop_YGO1Z4_9mYDzOiQ);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .arcade-glow {
+    text-shadow: 0 0 10px rgba(37, 157, 244, 0.5);
   }
 }

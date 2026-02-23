@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, Fragment, type FC } from 'react';
 import { useGameLoop, BIRD_WIDTH, BIRD_HEIGHT, BIRD_VISUAL_OFFSET_X, BIRD_VISUAL_OFFSET_Y, PIPE_WIDTH, PIPE_GAP } from '../hooks/useGameLoop';
 import { Bird } from './Bird';
 import { Pipe } from './Pipe';
@@ -10,9 +10,14 @@ interface GameProps {
   initialPipes?: PipeData[];
 }
 
-export const Game: React.FC<GameProps> = ({ onGameOver, initialPipes }) => {
+export const Game: FC<GameProps> = ({ onGameOver, initialPipes }) => {
   const [gameHeight, setGameHeight] = useState(window.innerHeight);
-  const { birdY, pipes, score, jump, birdVelocity, hasStarted } = useGameLoop(true, onGameOver, initialPipes, gameHeight);
+  const { birdY, pipes, score, jump, birdVelocity, hasStarted } = useGameLoop(
+    true, 
+    onGameOver, 
+    initialPipes, 
+    gameHeight
+  );
   const gameRef = useRef<HTMLDivElement>(null);
   const [debug, setDebug] = useState(false);
 
@@ -99,7 +104,7 @@ export const Game: React.FC<GameProps> = ({ onGameOver, initialPipes }) => {
               />
               {/* Pipe Hitboxes */}
               {pipes.map(pipe => (
-                <React.Fragment key={`debug-${pipe.id}`}>
+                <Fragment key={`debug-${pipe.id}`}>
                     <div 
                         className="absolute border-2 border-green-500 bg-green-500/30 z-50 pointer-events-none"
                         style={{
@@ -118,7 +123,7 @@ export const Game: React.FC<GameProps> = ({ onGameOver, initialPipes }) => {
                             width: PIPE_WIDTH,
                         }}
                     />
-                </React.Fragment>
+                </Fragment>
               ))}
             </>
           )}

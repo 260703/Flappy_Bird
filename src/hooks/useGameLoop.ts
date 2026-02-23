@@ -12,7 +12,12 @@ export const BIRD_VISUAL_OFFSET_Y = 6;
 export const PIPE_WIDTH = 70;
 export const PIPE_GAP = 150;
 
-export const useGameLoop = (isPlaying: boolean, onGameOver: (score: number) => void, initialPipes?: PipeData[], gameHeight: number = 600) => {
+export const useGameLoop = (
+  isPlaying: boolean, 
+  onGameOver: (score: number) => void, 
+  initialPipes?: PipeData[], 
+  gameHeight: number = 600
+) => {
   const [birdY, setBirdY] = useState(gameHeight / 2);
   const [score, setScore] = useState(0);
   const [pipes, setPipes] = useState<PipeData[]>(initialPipes ? JSON.parse(JSON.stringify(initialPipes)) : []);

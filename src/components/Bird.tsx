@@ -1,5 +1,5 @@
 import React from 'react';
-import birdImg from '../assets/bird.png';
+import birdImg from '../assets/bird.jpg';
 
 interface BirdProps {
   y: number;
