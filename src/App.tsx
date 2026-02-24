@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import { MainMenu } from "./components/MainMenu";
 import { Game } from "./components/Game";
 import { MapEditor } from "./components/MapEditor";
@@ -286,6 +287,7 @@ function App() {
           </div>
         </div>
       )}
+      <Analytics />
     </>
   );
 }
