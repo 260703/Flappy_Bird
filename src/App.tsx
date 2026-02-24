@@ -181,26 +181,17 @@ function App() {
   return (
     <>
       {gameState === "menu" && (
-        <div className="relative">
-          {session && (
-            <button
-              onClick={handleLogout}
-              className="absolute top-4 right-4 z-50 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow border-2 border-black font-game text-xs"
-            >
-              LOGOUT
-            </button>
-          )}
-
           <MainMenu
             onStart={startGame}
             onOpenEditor={() => setGameState("editor")}
             onOpenCustomMap={() => setGameState("custom-select")}
             onOpenProfile={() => session ? setGameState("profile") : setGameState("auth")}
             onOpenAuth={handleOpenAuth}
+            onLogout={handleLogout}
             highScore={highScore}
             isGuest={!session}
+            isLoggedIn={!!session}
           />
-        </div>
       )}
 
       {gameState === "editor" && <MapEditor onBack={handleBackToMenu} />}

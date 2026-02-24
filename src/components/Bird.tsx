@@ -14,7 +14,7 @@ export const Bird: React.FC<BirdProps> = ({ y, velocity }) => {
       className="absolute left-[100px] w-12 h-9 transition-transform duration-75"
       style={{ top: y, transform: `rotate(${rotation}deg)` }}
     >
-      <img src={birdImg} alt="bird" className="w-full h-full object-contain pixelated" />
+      <img src={birdImg} alt="bird" className="w-full h-full object-contain pixelated" style={{ mixBlendMode: 'multiply' }} />
     </div>
   );
 };

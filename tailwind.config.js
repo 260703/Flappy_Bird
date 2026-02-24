@@ -4,7 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        "primary": "#19e65e",
+        "primary": "#259df4",
         "background-light": "#70C5CF",
         "background-dark": "#112116",
         "flappy-sky": "#70c5ce",
@@ -18,9 +18,11 @@ export default {
         "flappy-ground-light": "#ded895",
         "flappy-ground-dark": "#b9a35a",
         "flappy-outline": "#000000",
+        "game-green": "#4ADE80",
+        "game-orange": "#FB923C",
       },
       fontFamily: {
-        "display": ["Spline Sans", "Noto Sans", "sans-serif"],
+        "display": ["Plus Jakarta Sans", "Spline Sans", "Noto Sans", "sans-serif"],
         "game": ["'Press Start 2P'", "cursive"]
       },
       keyframes: {

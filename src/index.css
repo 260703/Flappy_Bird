@@ -4,6 +4,8 @@
   --color-primary: #259df4;
   --color-background-light: #f5f7f8;
   --color-background-dark: #101a22;
+  --color-game-green: #4ade80;
+  --color-game-orange: #fb923c;
   --font-display: "Plus Jakarta Sans", "sans-serif";
 }
 
@@ -12,10 +14,38 @@
     image-rendering: pixelated;
   }
 
+  /* Sky background with subtle radial light */
+  .pixel-bg {
+    background-color: #70c5ce;
+    background-image:
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 20% 30%, white 0%, white 2%, transparent 3%),
+      radial-gradient(circle at 80% 20%, white 0%, white 1.5%, transparent 2.5%);
+  }
+
+  /* 3D extruded text shadow for the game logo */
+  .logo-3d {
+    text-shadow:
+      0 1px 0 #ccc,
+      0 2px 0 #c9c9c9,
+      0 3px 0 #bbb,
+      0 4px 0 #b9b9b9,
+      0 5px 0 #aaa,
+      0 6px 1px rgba(0, 0, 0, 0.1),
+      0 0 5px rgba(0, 0, 0, 0.1),
+      0 1px 3px rgba(0, 0, 0, 0.3),
+      0 3px 5px rgba(0, 0, 0, 0.2),
+      0 5px 10px rgba(0, 0, 0, 0.25),
+      0 10px 10px rgba(0, 0, 0, 0.2),
+      0 20px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Frosted glass card */
   .glass-card {
-    background: rgba(16, 26, 34, 0.85);
+    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(12px);
-    border: 1px solid rgba(37, 157, 244, 0.2);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .glow-button {
@@ -26,14 +56,6 @@
   .glow-button:hover {
     box-shadow: 0 0 30px rgba(37, 157, 244, 0.6);
     transform: translateY(-1px);
-  }
-
-  .bg-game-world {
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
-      url(https://lh3.googleusercontent.com/aida-public/AB6AXuBD1ZhTHwpL5gfZNQAu9UusraOxjC_jNbNLBVCqNzGGbOEZKTYGEZkMpjeBvdBqc-DY9Ze_ZE4GLSzGoBeBGlycAD55Si0KJeE3DPMLetyslSUweLZ7hoxDU9MsvJOPENv_gKUymtF4g7-EBpzBZQXR5LyL5q3MjsVjObxB1iEPldFKbdXtLIdfKNBBuSpimHH_z0YE3YatfUSos5VVLuuvzexd-LLZJAfUe19ZY4sqm4AtIkou9TN2corLzLop_YGO1Z4_9mYDzOiQ);
-    background-size: cover;
-    background-position: center;
   }
 
   .arcade-glow {
