@@ -6,6 +6,7 @@ interface MainMenuProps {
   onOpenEditor: () => void;
   onOpenCustomMap: () => void;
   onOpenProfile: () => void;
+  onOpenLeaderboard: () => void;
   onOpenAuth: () => void;
   onLogout: () => void;
   highScore: number;
@@ -18,6 +19,7 @@ export const MainMenu: FC<MainMenuProps> = ({
   onOpenEditor,
   onOpenCustomMap,
   onOpenProfile,
+  onOpenLeaderboard,
   onOpenAuth,
   onLogout,
   highScore,
@@ -66,34 +68,60 @@ export const MainMenu: FC<MainMenuProps> = ({
           <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-white text-[10px] font-bold tracking-wider">
             GUEST ACCOUNT
           </div>
-          <button
-            onClick={onOpenAuth}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full text-[10px] font-bold shadow-md transition-colors"
-          >
-            LOGIN
-          </button>
         </div>
       )}
 
       {/* ── Header ── */}
-      <header className="relative z-10 w-full px-8 py-6 flex justify-end">
-        {isLoggedIn ? (
+      <header className="relative z-10 w-full px-8 py-6 flex justify-between items-start">
+        {/* Left side spacer conceptually for guest badge if we had one here, or other header elements */}
+        <div></div>
+
+        <div className="flex gap-4">
           <button
-            onClick={onLogout}
-            className="group flex items-center gap-2 px-6 py-2 bg-white/10 hover:bg-white/20 transition-all rounded-full glass-card text-white text-sm font-bold tracking-wide"
+            onClick={onOpenLeaderboard}
+            className="group relative flex items-center justify-center size-14 border-none hover:scale-105 transition-transform duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform z-20 outline-none"
+            aria-label="Leaderboard"
           >
-            <span className="material-symbols-outlined text-xl">logout</span>
-            <span className="uppercase">Logout</span>
+            {/* Pill Background expanding to the left using width instead of scale */}
+            <div className="absolute right-0 top-0 bottom-0 w-14 group-hover:w-48 bg-primary/90 backdrop-blur-md rounded-full shadow-[0_0_15px_rgba(37,157,244,0.4)] transition-[width] duration-400 ease-[cubic-bezier(0.4,0,0.2,1)] -z-10" />
+
+            {/* Emerging Text sliding from right to left */}
+            <div className="absolute right-18 flex items-center justify-end w-28 overflow-hidden -z-10 text-right opacity-0 translate-x-4 transition-all duration-400 ease-[cubic-bezier(0.175,0.885,0.32,1.27)] group-hover:opacity-100 group-hover:translate-x-0 pointer-events-none whitespace-nowrap">
+              <span className="text-white font-extrabold text-[0.85rem] tracking-[0.15em] uppercase drop-shadow-md pr-1">
+                Leader<br />Board
+              </span>
+            </div>
+
+            {/* Solid Icon Circle Foreground Container */}
+            <div className="relative flex items-center justify-center size-14 bg-primary rounded-full shadow-lg overflow-hidden shrink-0 border border-white/10 z-10 transition-colors duration-400">
+              {/* Shine effect passing left to right across the circle */}
+              <div 
+                className="absolute inset-0 -translate-x-[150%] skew-x-12 bg-linear-to-r from-transparent via-white/50 to-transparent group-hover:animate-[shine_1.5s_cubic-bezier(0.4,0,0.2,1)_infinite] z-20 pointer-events-none" 
+              />
+              <span className="material-symbols-outlined text-2xl font-bold text-white relative z-10 drop-shadow-sm">
+                leaderboard
+              </span>
+            </div>
           </button>
-        ) : (
-          <button
-            onClick={onOpenAuth}
-            className="group flex items-center gap-2 px-6 py-2 bg-white/10 hover:bg-white/20 transition-all rounded-full glass-card text-white text-sm font-bold tracking-wide"
-          >
-            <span className="material-symbols-outlined text-xl">login</span>
-            <span className="uppercase">Login</span>
-          </button>
-        )}
+          
+          {isLoggedIn ? (
+            <button
+              onClick={onLogout}
+              className="group flex items-center gap-2 px-6 py-2 h-14 bg-white/10 hover:bg-white/20 transition-all rounded-full glass-card text-white text-sm font-bold tracking-wide"
+            >
+              <span className="material-symbols-outlined text-xl">logout</span>
+              <span className="uppercase">Logout</span>
+            </button>
+          ) : (
+            <button
+              onClick={onOpenAuth}
+              className="group flex items-center gap-2 px-6 py-2 h-14 bg-white/10 hover:bg-white/20 transition-all rounded-full glass-card text-white text-sm font-bold tracking-wide"
+            >
+              <span className="material-symbols-outlined text-xl">login</span>
+              <span className="uppercase">Login</span>
+            </button>
+          )}
+        </div>
       </header>
 
       {/* ── Center Content ── */}

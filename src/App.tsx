@@ -6,6 +6,7 @@ import { MapEditor } from "./components/MapEditor";
 import { MapSelector } from "./components/MapSelector";
 import { Profile } from "./components/Profile";
 import Auth from "./components/Auth";
+import { Leaderboard } from "./components/Leaderboard";
 import { supabase } from "./utils/supabaseClient";
 import type { MapData } from "./types";
 import type { Session } from "@supabase/supabase-js";
@@ -13,7 +14,7 @@ import type { Session } from "@supabase/supabase-js";
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [gameState, setGameState] = useState<
-    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth"
+    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth" | "leaderboard"
   >("menu");
   const [highScore, setHighScore] = useState(0);
   const [score, setScore] = useState(0);
@@ -187,6 +188,7 @@ function App() {
             onOpenEditor={() => setGameState("editor")}
             onOpenCustomMap={() => setGameState("custom-select")}
             onOpenProfile={() => session ? setGameState("profile") : setGameState("auth")}
+            onOpenLeaderboard={() => setGameState("leaderboard")}
             onOpenAuth={handleOpenAuth}
             onLogout={handleLogout}
             highScore={highScore}
@@ -208,6 +210,15 @@ function App() {
         <Auth onLogin={() => setGameState("menu")} onBack={handleBackToMenu} />
       )}
 
+      {gameState === "leaderboard" && (
+        <Leaderboard 
+          onBack={handleBackToMenu}
+          isGuest={!session}
+          onOpenAuth={handleOpenAuth}
+          userId={session?.user?.id}
+        />
+      )}
+
       {gameState === 'profile' && session?.user && (
         <Profile 
           onBack={handleBackToMenu} 
@@ -224,66 +235,127 @@ function App() {
       )}
 
       {gameState === "gameover" && (
-        <div className="relative flex h-screen w-full flex-col items-center justify-center bg-black/80 font-game z-50">
-          <div className="bg-[#ded895] p-8 border-4 border-black text-center rounded-lg shadow-lg">
-            <h2
-              className="text-4xl text-[#f2994a] mb-6"
-              style={{ textShadow: "2px 2px 0 #000" }}
-            >
-              {selectedMap && score === selectedMap.pipes.length
-                ? "LEVEL COMPLETED!"
-                : "GAME OVER"}
-            </h2>
+        <div className="fixed inset-0 flex flex-col items-center justify-center p-4 font-display z-50">
+          {/* Blurred Game Background Overlay */}
+          <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div 
+              className="absolute inset-0 bg-cover bg-center scale-110 blur-xl opacity-60 dark:opacity-40" 
+              style={{ backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDQ_3a30evpDGQKM_BzJRudQxfkFrnfXB5AEkAPPj2bg8KWe9ct0aOCUMk8CKR8DRroakgMUMnO8PMMmgsDSOLmsgV6KfMANC6G5NngsUF1Hd4zio0Fv0epqc__5fisW7Uph2iOa1ZQwz82zoEEiCjPFF1V-Lhm_3OiLn6Zc1_2Fe0k0UEQ54OQ3CzPyN5mWhNICKk_u7_36d0HouqfxPKtu3nzp-wXYQxs_ObqegiErju4cQeVGl32lvcT7Ur9dFJ2uMsZuP1l4OYW")' }}
+            />
+            {/* Darken overlay for contrast */}
+            <div className="absolute inset-0 bg-gradient-to-b from-slate-900/50 to-slate-900/90 dark:from-slate-950/70 dark:to-slate-950/95" />
+          </div>
 
-            <div className="bg-[#d0c874] p-4 border-2 border-[#b9a35a] mb-6 rounded">
-              <p className="text-[#e86101] text-xl mb-2">SCORE</p>
-              <p
-                className="text-white text-3xl mb-4"
-                style={{ textShadow: "2px 2px 0 #000" }}
-              >
-                {score}
-              </p>
+          <div className="relative z-10 w-full max-w-md animate-in fade-in zoom-in duration-500">
+            {!session ? (
+              // GUEST VIEW
+              <div className="bg-background-dark/80 backdrop-blur-xl border border-white/10 rounded-xl p-8 shadow-2xl flex flex-col items-center">
+                <div className="mb-4 bg-primary/20 p-4 rounded-full">
+                  <span className="material-symbols-outlined text-primary text-5xl">
+                    {selectedMap && score === selectedMap.pipes.length ? "workspace_premium" : "emoji_events"}
+                  </span>
+                </div>
+                <h1 className="text-white tracking-tight text-4xl sm:text-5xl font-extrabold leading-tight text-center pb-8 italic">
+                  {selectedMap && score === selectedMap.pipes.length ? "LEVEL CLEAR" : "GAME OVER"}
+                </h1>
+                
+                <div className="grid grid-cols-2 gap-4 w-full mb-8">
+                  <div className="flex flex-col items-center justify-center gap-1 rounded-xl p-6 bg-white/5 border border-white/10">
+                    <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Score</p>
+                    <p className="text-white tracking-tight text-4xl font-extrabold">{score}</p>
+                  </div>
+                  {!selectedMap ? (
+                    <div className="flex flex-col items-center justify-center gap-1 rounded-xl p-6 bg-white/5 border border-white/10">
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Best</p>
+                      <p className="text-white tracking-tight text-4xl font-extrabold">{highScore > score ? highScore : score}</p>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center gap-1 rounded-xl p-6 bg-white/5 border border-white/10">
+                      <p className="text-slate-400 text-xs font-bold uppercase tracking-widest">Map Pipes</p>
+                      <p className="text-white tracking-tight text-4xl font-extrabold">{selectedMap.pipes.length}</p>
+                    </div>
+                  )}
+                </div>
 
-              {!selectedMap && (
-                <>
-                  <p className="text-[#e86101] text-xl mb-2">BEST</p>
-                  <p
-                    className="text-white text-3xl"
-                    style={{ textShadow: "2px 2px 0 #000" }}
+                <div className="flex flex-col w-full gap-4">
+                  <button 
+                    onClick={handleLoginToSaveScore}
+                    className="flex items-center justify-center gap-3 overflow-hidden rounded-full h-14 px-8 bg-primary hover:bg-blue-500 text-white text-lg font-bold transition-all shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98]"
                   >
-                    {highScore}
-                  </p>
-                </>
-              )}
-            </div>
+                    <span className="material-symbols-outlined shrink-0 text-xl">cloud_upload</span>
+                    <span className="truncate uppercase tracking-wider text-sm sm:text-base">Login to Save Score</span>
+                  </button>
+                  <button 
+                    onClick={selectedMap ? () => startCustomGame(selectedMap) : startGame}
+                    className="flex items-center justify-center gap-3 overflow-hidden rounded-full h-14 px-8 bg-game-green hover:brightness-110 text-slate-900 text-lg font-bold transition-all shadow-lg shadow-game-green/20 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined shrink-0 text-xl">replay</span>
+                    <span className="truncate uppercase tracking-wider text-sm sm:text-base">Play Again</span>
+                  </button>
+                  <button 
+                    onClick={handleBackToMenu}
+                    className="flex items-center justify-center gap-3 overflow-hidden rounded-full h-14 px-8 bg-game-orange hover:brightness-110 text-slate-900 text-lg font-bold transition-all shadow-lg shadow-game-orange/20 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined shrink-0 text-xl">home</span>
+                    <span className="truncate uppercase tracking-wider text-sm sm:text-base">Main Menu</span>
+                  </button>
+                  <button 
+                    onClick={() => setGameState('leaderboard')}
+                    className="mt-2 flex items-center justify-center gap-2 bg-transparent text-slate-400 hover:text-white text-sm font-semibold transition-colors"
+                  >
+                    <span className="material-symbols-outlined text-base">leaderboard</span>
+                    <span>View Global Leaderboard</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              // LOGGED IN VIEW
+              <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border border-white/20 dark:border-slate-700/30 rounded-xl shadow-2xl p-8 flex flex-col items-center">
+                <div className="size-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-6 border-4 border-white dark:border-slate-700 shadow-inner">
+                  <span className="material-symbols-outlined text-4xl text-slate-400 dark:text-slate-500">
+                    {selectedMap && score === selectedMap.pipes.length ? "emoji_events" : "sentiment_very_dissatisfied"}
+                  </span>
+                </div>
+                <h1 className="text-slate-900 dark:text-slate-100 text-4xl sm:text-5xl font-black tracking-tighter mb-8 italic text-center">
+                  {selectedMap && score === selectedMap.pipes.length ? "LEVEL CLEAR" : "GAME OVER"}
+                </h1>
+                
+                <div className="grid grid-cols-2 gap-4 w-full mb-10">
+                  <div className="bg-primary/10 dark:bg-primary/20 border border-primary/20 dark:border-primary/30 rounded-xl p-5 flex flex-col items-center">
+                    <p className="text-primary text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-1">Score</p>
+                    <p className="text-slate-900 dark:text-slate-100 text-4xl font-extrabold">{score}</p>
+                  </div>
+                  {!selectedMap ? (
+                    <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 flex flex-col items-center">
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-1">Best</p>
+                      <p className="text-slate-900 dark:text-slate-100 text-4xl font-extrabold">{highScore > score ? highScore : score}</p>
+                    </div>
+                  ) : (
+                    <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-5 flex flex-col items-center">
+                      <p className="text-slate-500 dark:text-slate-400 text-[10px] sm:text-xs font-bold tracking-[0.2em] uppercase mb-1">Map Pipes</p>
+                      <p className="text-slate-900 dark:text-slate-100 text-4xl font-extrabold">{selectedMap.pipes.length}</p>
+                    </div>
+                  )}
+                </div>
 
-            <div className="flex flex-col gap-4">
-              {!session && (
-                <button
-                  onClick={handleLoginToSaveScore}
-                  className="px-6 py-3 bg-blue-500 text-white border-2 border-black hover:scale-105 active:translate-y-1 transition-transform"
-                  style={{ boxShadow: "0 4px 0 #2563eb" }}
-                >
-                  LOGIN TO SAVE SCORE
-                </button>
-              )}
-
-              <button
-                onClick={selectedMap ? () => startCustomGame(selectedMap) : startGame}
-                className="px-6 py-3 bg-[#54ac42] text-white border-2 border-black hover:scale-105 active:translate-y-1 transition-transform"
-                style={{ boxShadow: "0 4px 0 #367d2a" }}
-              >
-                PLAY AGAIN
-              </button>
-
-              <button
-                onClick={handleBackToMenu}
-                className="px-6 py-3 bg-[#e86101] text-white border-2 border-black hover:scale-105 active:translate-y-1 transition-transform"
-                style={{ boxShadow: "0 4px 0 #b34b00" }}
-              >
-                MAIN MENU
-              </button>
-            </div>
+                <div className="flex flex-col gap-3 w-full">
+                  <button 
+                    onClick={selectedMap ? () => startCustomGame(selectedMap) : startGame}
+                    className="flex items-center justify-center gap-3 w-full h-14 bg-success hover:bg-success/90 text-white rounded-full font-bold text-lg shadow-lg shadow-success/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined text-xl">replay</span>
+                    <span className="tracking-wider">PLAY AGAIN</span>
+                  </button>
+                  <button 
+                    onClick={handleBackToMenu}
+                    className="flex items-center justify-center gap-3 w-full h-14 bg-game-orange hover:bg-orange-500 text-white rounded-full font-bold text-lg shadow-lg shadow-orange-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <span className="material-symbols-outlined text-xl">home</span>
+                    <span className="tracking-wider">MAIN MENU</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
