@@ -125,16 +125,16 @@ export const MainMenu: FC<MainMenuProps> = ({
       </header>
 
       {/* ── Center Content ── */}
-      <main className="relative z-10 flex flex-col items-center gap-12 mb-20">
+      <main className="relative z-10 flex flex-col items-center gap-6 sm:gap-8 mb-4 sm:mb-8">
         {/* Logo Section */}
-        <div className="flex flex-col items-center gap-4">
+        <div className="flex flex-col items-center gap-2 sm:gap-4">
           <div className="relative">
-            <h1 className="text-white text-7xl md:text-9xl font-extrabold logo-3d tracking-tighter italic">
+            <h1 className="text-white text-6xl md:text-8xl lg:text-9xl font-extrabold logo-3d tracking-tighter italic">
               FLAPPY<br />BIRD
             </h1>
 
             {/* Bird icon — stationary, positioned above right end of "FLAPPY" */}
-            <div className="absolute -top-12 right-[10%] w-16 h-16 flex items-center justify-center">
+            <div className="absolute -top-10 right-[10%] w-14 h-14 flex items-center justify-center">
               <img
                 alt="Flappy Bird"
                 className="w-full h-full object-contain drop-shadow-lg pixelated rounded-full"
@@ -145,7 +145,7 @@ export const MainMenu: FC<MainMenuProps> = ({
           </div>
 
           {/* High Score Card */}
-          <div className="glass-card px-8 py-3 rounded-full flex items-center gap-4 mt-6">
+          <div className="glass-card px-8 py-3 rounded-full flex items-center gap-4 mt-2 md:mt-4">
             <span className="text-white/70 text-sm font-bold uppercase tracking-widest">High Score</span>
             <span className="text-white text-3xl font-black tabular-nums">
               {String(highScore).padStart(3, '0')}
@@ -155,7 +155,7 @@ export const MainMenu: FC<MainMenuProps> = ({
         </div>
 
         {/* ── Controls Stack ── */}
-        <div className="flex flex-col gap-4 w-full max-w-sm px-6">
+        <div className="flex flex-col gap-3 w-full max-w-sm px-6">
           {/* Start Game */}
           <button
             onClick={onStart}
