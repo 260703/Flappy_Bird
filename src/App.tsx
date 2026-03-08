@@ -7,6 +7,8 @@ import { MapSelector } from "./components/MapSelector";
 import { Profile } from "./components/Profile";
 import Auth from "./components/Auth";
 import { Leaderboard } from "./components/Leaderboard";
+import { PrivacyPolicy } from "./components/PrivacyPolicy";
+import { TermsOfService } from "./components/TermsOfService";
 import { supabase } from "./utils/supabaseClient";
 import type { MapData } from "./types";
 import type { Session } from "@supabase/supabase-js";
@@ -14,7 +16,7 @@ import type { Session } from "@supabase/supabase-js";
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [gameState, setGameState] = useState<
-    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth" | "leaderboard"
+    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth" | "leaderboard" | "privacy" | "terms"
   >("menu");
   const [highScore, setHighScore] = useState(0);
   const [score, setScore] = useState(0);
@@ -207,7 +209,28 @@ function App() {
       )}
 
       {gameState === "auth" && (
-        <Auth onLogin={() => setGameState("menu")} onBack={handleBackToMenu} />
+        <Auth 
+          onLogin={() => setGameState("menu")} 
+          onBack={handleBackToMenu} 
+          onOpenPrivacy={() => setGameState("privacy")}
+          onOpenTerms={() => setGameState("terms")}
+        />
+      )}
+
+      {gameState === "privacy" && (
+        <PrivacyPolicy 
+          onBack={handleBackToMenu} 
+          onOpenPrivacy={() => setGameState("privacy")} 
+          onOpenTerms={() => setGameState("terms")} 
+        />
+      )}
+
+      {gameState === "terms" && (
+        <TermsOfService 
+          onBack={handleBackToMenu} 
+          onOpenPrivacy={() => setGameState("privacy")} 
+          onOpenTerms={() => setGameState("terms")} 
+        />
       )}
 
       {gameState === "leaderboard" && (
