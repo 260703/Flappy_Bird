@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Routes, Route } from "react-router-dom";
 import { Analytics } from "@vercel/analytics/react";
 import { MainMenu } from "./components/MainMenu";
 import { Game } from "./components/Game";
@@ -16,7 +17,7 @@ import type { Session } from "@supabase/supabase-js";
 function App() {
   const [session, setSession] = useState<Session | null>(null);
   const [gameState, setGameState] = useState<
-    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth" | "leaderboard" | "privacy" | "terms"
+    "menu" | "playing" | "gameover" | "editor" | "custom-select" | "profile" | "auth" | "leaderboard"
   >("menu");
   const [highScore, setHighScore] = useState(0);
   const [score, setScore] = useState(0);
@@ -184,78 +185,63 @@ function App() {
 
   return (
     <>
-      {gameState === "menu" && (
-          <MainMenu
-            onStart={startGame}
-            onOpenEditor={() => setGameState("editor")}
-            onOpenCustomMap={() => setGameState("custom-select")}
-            onOpenProfile={() => session ? setGameState("profile") : setGameState("auth")}
-            onOpenLeaderboard={() => setGameState("leaderboard")}
-            onOpenAuth={handleOpenAuth}
-            onLogout={handleLogout}
-            highScore={highScore}
-            isGuest={!session}
-            isLoggedIn={!!session}
-          />
-      )}
+      <Routes>
+        <Route path="/" element={
+          <>
+            {gameState === "menu" && (
+                <MainMenu
+                  onStart={startGame}
+                  onOpenEditor={() => setGameState("editor")}
+                  onOpenCustomMap={() => setGameState("custom-select")}
+                  onOpenProfile={() => session ? setGameState("profile") : setGameState("auth")}
+                  onOpenLeaderboard={() => setGameState("leaderboard")}
+                  onOpenAuth={handleOpenAuth}
+                  onLogout={handleLogout}
+                  highScore={highScore}
+                  isGuest={!session}
+                  isLoggedIn={!!session}
+                />
+            )}
 
-      {gameState === "editor" && <MapEditor onBack={handleBackToMenu} />}
+            {gameState === "editor" && <MapEditor onBack={handleBackToMenu} />}
 
-      {gameState === "custom-select" && (
-        <MapSelector
-          onSelect={startCustomGame}
-          onBack={handleBackToMenu}
-        />
-      )}
+            {gameState === "custom-select" && (
+              <MapSelector
+                onSelect={startCustomGame}
+                onBack={handleBackToMenu}
+              />
+            )}
 
-      {gameState === "auth" && (
-        <Auth 
-          onLogin={() => setGameState("menu")} 
-          onBack={handleBackToMenu} 
-          onOpenPrivacy={() => setGameState("privacy")}
-          onOpenTerms={() => setGameState("terms")}
-        />
-      )}
+            {gameState === "auth" && (
+              <Auth 
+                onLogin={() => setGameState("menu")} 
+                onBack={handleBackToMenu} 
+              />
+            )}
 
-      {gameState === "privacy" && (
-        <PrivacyPolicy 
-          onBack={handleBackToMenu} 
-          onOpenPrivacy={() => setGameState("privacy")} 
-          onOpenTerms={() => setGameState("terms")} 
-        />
-      )}
+            {gameState === "leaderboard" && (
+              <Leaderboard 
+                onBack={handleBackToMenu}
+                isGuest={!session}
+                onOpenAuth={handleOpenAuth}
+                userId={session?.user?.id}
+              />
+            )}
 
-      {gameState === "terms" && (
-        <TermsOfService 
-          onBack={handleBackToMenu} 
-          onOpenPrivacy={() => setGameState("privacy")} 
-          onOpenTerms={() => setGameState("terms")} 
-        />
-      )}
+            {gameState === 'profile' && session?.user && (
+              <Profile 
+                onBack={handleBackToMenu} 
+                onLogout={handleLogout} 
+                userId={session.user.id} 
+              />
+            )}
 
-      {gameState === "leaderboard" && (
-        <Leaderboard 
-          onBack={handleBackToMenu}
-          isGuest={!session}
-          onOpenAuth={handleOpenAuth}
-          userId={session?.user?.id}
-        />
-      )}
-
-      {gameState === 'profile' && session?.user && (
-        <Profile 
-          onBack={handleBackToMenu} 
-          onLogout={handleLogout} 
-          userId={session.user.id} 
-        />
-      )}
-
-      {gameState === "playing" && (
-        <Game 
-          onGameOver={handleGameOver} 
-          initialPipes={selectedMap?.pipes} 
-        />
-      )}
+            {gameState === "playing" && (
+              <Game 
+                onGameOver={handleGameOver} 
+                initialPipes={selectedMap?.pipes} 
+              />
+            )}
 
       {gameState === "gameover" && (
         <div className="fixed inset-0 flex flex-col items-center justify-center p-4 font-display z-50">
@@ -382,6 +368,11 @@ function App() {
           </div>
         </div>
       )}
+          </>
+        } />
+        <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/terms" element={<TermsOfService />} />
+      </Routes>
       <Analytics />
     </>
   );

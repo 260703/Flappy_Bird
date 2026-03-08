@@ -1,12 +1,7 @@
 import { type FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LegalPageLayout } from './LegalPageLayout';
 import { useScrollAnimation } from '../hooks/useScrollAnimation';
-
-interface TermsOfServiceProps {
-  onBack: () => void;
-  onOpenPrivacy: () => void;
-  onOpenTerms: () => void;
-}
 
 const AnimatedSection: FC<{ children: React.ReactNode; className?: string }> = ({ children, className = '' }) => {
   const ref = useScrollAnimation(0.2);
@@ -21,14 +16,14 @@ const AnimatedSection: FC<{ children: React.ReactNode; className?: string }> = (
   );
 };
 
-export const TermsOfService: FC<TermsOfServiceProps> = ({ onBack, onOpenPrivacy, onOpenTerms }) => {
+export const TermsOfService: FC = () => {
+  const navigate = useNavigate();
+
   return (
     <LegalPageLayout 
       title="Terms of Service" 
       lastUpdated="March 2026" 
-      onBack={onBack}
-      onOpenPrivacy={onOpenPrivacy}
-      onOpenTerms={onOpenTerms}
+      onBack={() => navigate('/')}
     >
       <AnimatedSection className="prose prose-invert prose-slate max-w-none">
         <p className="text-xl font-medium text-slate-200 mb-8 border-l-4 border-primary pl-4 py-1 bg-white/5 rounded-r w-fit">

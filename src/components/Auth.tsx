@@ -8,11 +8,9 @@ import { Footer } from './Footer';
 interface AuthProps {
   onLogin: () => void;
   onBack?: () => void;
-  onOpenPrivacy?: () => void;
-  onOpenTerms?: () => void;
 }
 
-export default function Auth({ onLogin, onBack, onOpenPrivacy, onOpenTerms }: AuthProps) {
+export default function Auth({ onLogin, onBack }: AuthProps) {
   const [loading, setLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup'>('login');
   const [error, setError] = useState<string | null>(null);
@@ -151,11 +149,9 @@ export default function Auth({ onLogin, onBack, onOpenPrivacy, onOpenTerms }: Au
           )}
       </div>
 
-      {onOpenPrivacy && onOpenTerms && (
-        <div className="relative z-10 w-full mt-auto">
-          <Footer onOpenPrivacy={onOpenPrivacy} onOpenTerms={onOpenTerms} />
-        </div>
-      )}
+      <div className="relative z-10 w-full mt-auto">
+        <Footer />
+      </div>
 
       {/* Floating Decorative Assets (Subtle) */}
       <div className="fixed top-20 right-20 opacity-20 hidden lg:block pointer-events-none">

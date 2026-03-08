@@ -7,8 +7,6 @@ interface LegalPageLayoutProps {
   lastUpdated: string;
   children: ReactNode;
   onBack: () => void;
-  onOpenPrivacy: () => void;
-  onOpenTerms: () => void;
 }
 
 export const LegalPageLayout: FC<LegalPageLayoutProps> = ({
@@ -16,8 +14,6 @@ export const LegalPageLayout: FC<LegalPageLayoutProps> = ({
   lastUpdated,
   children,
   onBack,
-  onOpenPrivacy,
-  onOpenTerms,
 }) => {
   const [scrollProgress, setScrollProgress] = useState(0);
 
@@ -100,7 +96,7 @@ export const LegalPageLayout: FC<LegalPageLayoutProps> = ({
 
       {/* ── Footer ── */}
       <div className="relative z-10 mt-auto px-4 max-w-5xl mx-auto w-full">
-        <Footer onOpenPrivacy={onOpenPrivacy} onOpenTerms={onOpenTerms} />
+        <Footer />
       </div>
     </div>
   );
